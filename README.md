@@ -134,6 +134,24 @@ Não substitui fontes oficiais do governo.
 
 ---
 
+## 🔄 Outras aplicações
+
+A mesma abordagem deste projeto pode ser aplicada a diversas bases públicas brasileiras que não possuem API estruturada e exigem extração via HTML, CSV ou PDF.
+
+Exemplos:
+
+* **Banco Central (BCB):** listas de instituições autorizadas
+* **CVM:** cadastro de fundos e participantes do mercado
+* **ANEEL:** agentes do setor elétrico
+* **Portal da Transparência (CGU):** despesas e fornecedores públicos
+* **MEC:** dados educacionais (ENEM, Censo Escolar)
+* **Diário Oficial da União (DOU):** publicações regulatórias
+* **Páginas gov.br:** datasets com links dinâmicos
+
+Essas fontes compartilham desafios como ausência de API, inconsistências estruturais e necessidade de normalização para uso analítico.
+
+---
+
 ## 👤 Autor
 
 Dante Chacon
