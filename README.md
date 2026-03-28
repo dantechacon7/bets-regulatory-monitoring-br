@@ -152,12 +152,6 @@ Essas fontes compartilham desafios como ausência de API, inconsistências estru
 
 ---
 
-## 👤 Autor
-
-Dante Chacon
-
----
-
 ## 📄 Licença
 
 MIT License
