@@ -1,145 +1,145 @@
 # SPA Bets Whitelist Pipeline 🇧🇷
 
-Automated pipeline to extract, clean and publish the official whitelist of regulated betting companies in Brazil (SPA/MF).
+Pipeline automatizado para extração, tratamento e disponibilização da lista oficial de empresas de apostas autorizadas no Brasil, publicada pela Secretaria de Prêmios e Apostas (SPA/MF).
 
-This project was designed to support **Compliance, Risk and Anti-Money Laundering (PLD)** workflows by providing a structured and reliable dataset of authorized betting operators.
-
----
-
-## 📌 Context
-
-The Brazilian Ministry of Finance (SPA/MF) publishes the official list of authorized betting companies via a public webpage.
-
-However:
-
-* There is **no public API** for structured access
-* Data is provided as a **CSV embedded in HTML**
-* The file has **hierarchical inconsistencies** (missing repeated fields)
-
-This project solves that by building a **data extraction and normalization pipeline**.
+O projeto foi desenvolvido para suportar áreas de **Compliance, Risco e Prevenção à Lavagem de Dinheiro (PLD)**, garantindo uma base confiável e estruturada de operadores regulados.
 
 ---
 
-## ⚙️ How it works
+## 📌 Contexto
 
-The pipeline is implemented using **Google Apps Script** and follows three steps:
+A SPA/MF disponibiliza a lista de empresas autorizadas por meio de uma página pública.
 
-### 1. Extract
+Entretanto:
 
-* Access SPA webpage
-* Identify CSV link dynamically
-* Download raw dataset
+* Não existe **API pública de consulta**
+* Os dados são fornecidos via **CSV embutido em HTML**
+* O arquivo possui **estrutura hierárquica inconsistente** (campos omitidos em linhas subsequentes)
 
-### 2. Transform
-
-* Reconstruct hierarchical relationships (company ↔ brand ↔ domain)
-* Normalize CNPJ (numbers only)
-* Fill missing values using memory logic
-* Extract brand names from domains when necessary
-* Fix encoding issues
-
-### 3. Load
-
-* Publish cleaned dataset into Google Sheets
-* Apply formatting for usability and joins
+Este projeto resolve essas limitações construindo um pipeline de **extração e normalização de dados**.
 
 ---
 
-## 🧠 Key Features
+## ⚙️ Como funciona
 
-* Hierarchical data reconstruction (no orphan records)
-* CNPJ normalization for database joins
-* Intelligent fallback for missing brand names
-* Encoding sanitization (UTF-8 fixes)
-* Ready for compliance monitoring workflows
+O pipeline foi implementado em **Google Apps Script** e segue três etapas principais:
 
----
+### 1. Extração
 
-## 📊 Data Model
+* Acessa a página oficial da SPA
+* Identifica dinamicamente o link do CSV
+* Realiza o download do arquivo bruto
 
-| Field              | Description                     | Purpose               |
-| ------------------ | ------------------------------- | --------------------- |
-| ID                 | Authorization identifier        | Audit tracking        |
-| PORTARIA           | Official authorization document | Legal validation      |
-| DENOMINAÇÃO SOCIAL | Company legal name              | Entity identification |
-| CNPJ               | Company identifier              | Primary key for joins |
-| MARCAS             | Brand names                     | Transaction matching  |
-| DOMÍNIOS           | Authorized domains              | Fraud detection       |
-| REQUERIMENTO       | Request protocol                | Temporal tracking     |
+### 2. Transformação
 
----
+* Reconstrói a hierarquia (empresa → marca → domínio)
+* Normaliza o CNPJ (somente números)
+* Preenche campos ausentes com base em memória da última linha válida
+* Aplica fallback para marcas a partir do domínio
+* Corrige problemas de encoding
 
-## 🚨 Use Cases
+### 3. Carga
 
-* Detect unauthorized betting operators
-* Monitor suspicious transaction patterns
-* Cross-check merchants against regulated entities
-* Identify brand impersonation attempts
+* Publica os dados tratados no Google Sheets
+* Aplica formatação para facilitar análise e integrações
 
 ---
 
-## 📂 Project Structure
+## 🧠 Principais diferenciais
+
+* Reconstrução hierárquica (evita registros órfãos)
+* Padronização de CNPJ para joins confiáveis
+* Fallback inteligente de marca via domínio
+* Sanitização automática de caracteres
+* Estrutura pronta para uso em monitoramento de risco
+
+---
+
+## 📊 Modelo de dados
+
+| Campo              | Descrição                    | Função                   |
+| ------------------ | ---------------------------- | ------------------------ |
+| ID                 | Identificador da autorização | Auditoria                |
+| PORTARIA           | Número da portaria           | Validação legal          |
+| DENOMINAÇÃO SOCIAL | Razão social                 | Identificação da empresa |
+| CNPJ               | CNPJ numérico                | Chave principal          |
+| MARCAS             | Nomes fantasia               | Matching de transações   |
+| DOMÍNIOS           | URLs autorizadas             | Detecção de fraude       |
+| REQUERIMENTO       | Protocolo                    | Controle temporal        |
+
+---
+
+## 🚨 Casos de uso
+
+* Identificação de bets não autorizadas
+* Monitoramento de transações suspeitas
+* Cruzamento com base de merchants
+* Detecção de tentativa de fraude por similaridade de marca
+
+---
+
+## 📂 Estrutura do projeto
 
 ```
-apps_script/     → Google Apps Script implementation
-docs/            → Technical documentation
-data_sample/     → Example output dataset
+apps_script/     → Script principal em Google Apps Script
+docs/            → Documentação técnica
+data_sample/     → Exemplo de saída do pipeline
 ```
 
 ---
 
-## ▶️ How to use
+## ▶️ Como utilizar
 
-1. Open Google Sheets
-2. Go to Extensions → Apps Script
-3. Paste the script from:
+1. Abra o Google Sheets
+2. Vá em **Extensões → Apps Script**
+3. Copie o conteúdo de:
 
 ```
 apps_script/importarAutorizadasFinal.gs
 ```
 
-4. Update:
+4. Atualize o ID da planilha:
 
 ```javascript
-const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID';
+const SPREADSHEET_ID = 'SEU_SPREADSHEET_ID';
 ```
 
-5. Run the function:
+5. Execute a função:
 
 ```javascript
 importarAutorizadasFinal()
 ```
 
-6. (Optional) Set a daily trigger for automatic updates
+6. (Opcional) Configure um gatilho diário para atualização automática
 
 ---
 
-## ⚠️ Limitations
+## ⚠️ Limitações
 
-* No official API available from SPA/MF
-* Depends on HTML structure of government page
-* Changes in webpage may require script updates
-
----
-
-## 🔒 Compliance Note
-
-This project is intended for:
-
-* Risk analysis
-* Regulatory monitoring
-* Internal compliance workflows
-
-It does not replace official regulatory sources.
+* Não há API oficial disponível pela SPA/MF
+* Dependência da estrutura HTML da página
+* Mudanças no site podem exigir ajustes no script
 
 ---
 
-## 👤 Author
+## 🔒 Observação de Compliance
+
+Este projeto tem finalidade de:
+
+* Monitoramento regulatório
+* Apoio à análise de risco
+* Estruturação de dados para PLD
+
+Não substitui fontes oficiais do governo.
+
+---
+
+## 👤 Autor
 
 Dante Chacon
 
 ---
 
-## 📄 License
+## 📄 Licença
 
 MIT License
