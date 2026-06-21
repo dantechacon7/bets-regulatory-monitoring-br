@@ -1,124 +1,173 @@
-# SPA Bets Whitelist Pipeline 🇧🇷
+# SPA Regulated Operators Pipeline 🇧🇷
 
-Pipeline automatizado para extração, tratamento e disponibilização da lista oficial de empresas de apostas autorizadas no Brasil, publicada pela Secretaria de Prêmios e Apostas (SPA/MF).
+Automated pipeline for extracting, transforming, and publishing the official list of regulated betting operators in Brazil, maintained by the Secretariat of Prizes and Betting (SPA/MF).
 
-O projeto foi desenvolvido para suportar áreas de **Compliance, Risco e Prevenção à Lavagem de Dinheiro (PLD)**, garantindo uma base confiável e estruturada de operadores regulados.
+The project was designed to support **Compliance, Risk, and AML (Anti-Money Laundering)** teams by providing a reliable and structured dataset of authorized operators.
+
+[EN](#en-overview) • [PT-BR](#pt-br-visão-geral)
 
 ---
+
+# EN Overview
+
+## 📌 Context
+
+SPA/MF publishes the list of authorized operators through a public webpage.
+
+However:
+
+* No public API is available
+* Data is exposed through a CSV embedded in HTML
+* The source contains inconsistent hierarchical structures, with omitted values across rows
+
+This project addresses these challenges through an automated extraction and normalization pipeline.
+
+---
+
+## ⚙️ Pipeline Architecture
+
+### 1. Extraction
+
+* Accesses the official SPA webpage
+* Dynamically locates the CSV file
+* Downloads the raw dataset
+
+### 2. Transformation
+
+* Reconstructs hierarchy (company → brand → domain)
+* Standardizes tax IDs (CNPJ)
+* Propagates missing values from previous rows
+* Applies brand fallback based on domains
+* Fixes encoding issues
+
+### 3. Load
+
+* Publishes the processed dataset to Google Sheets
+* Applies formatting for analytics and integrations
+
+---
+
+## 🧠 Key Features
+
+* Hierarchical reconstruction to prevent orphan records
+* CNPJ standardization for reliable joins
+* Intelligent brand fallback using domains
+* Automatic character sanitization
+* Data structure optimized for AML and risk monitoring
+
+---
+
+## 📊 Data Model
+
+| Field        | Description                 | Purpose                |
+| ------------ | --------------------------- | ---------------------- |
+| ID           | Authorization identifier    | Auditing               |
+| ORDINANCE    | Regulatory ordinance number | Legal validation       |
+| COMPANY_NAME | Legal entity name           | Company identification |
+| CNPJ         | Standardized tax identifier | Primary key            |
+| BRANDS       | Trade names                 | Transaction matching   |
+| DOMAINS      | Authorized websites         | Fraud detection        |
+| REQUEST_ID   | Registration request        | Temporal tracking      |
+
+---
+
+## 🚨 Use Cases
+
+* Identification of unauthorized betting operators
+* Suspicious transaction monitoring
+* Merchant database matching
+* Brand similarity and fraud detection
+
+---
+
+## ⚠️ Limitations
+
+* No official API is available
+* Dependent on the SPA webpage structure
+* Changes in the source page may require adjustments
+
+---
+
+## 🔒 Compliance Notice
+
+This project is intended for:
+
+* Regulatory monitoring
+* Risk analysis support
+* AML data preparation
+
+It does not replace official government sources.
+
+---
+
+## 🔄 Similar Applications
+
+The same approach can be extended to other Brazilian public datasets lacking APIs, such as:
+
+* Central Bank (BCB)
+* Securities Commission (CVM)
+* National Electric Agency (ANEEL)
+* Transparency Portal (CGU)
+* Ministry of Education datasets
+* Federal Official Gazette (DOU)
+
+---
+
+# PT-BR Visão Geral
 
 ## 📌 Contexto
 
-A SPA/MF disponibiliza a lista de empresas autorizadas por meio de uma página pública.
+A SPA/MF disponibiliza a lista de operadores autorizados por meio de uma página pública.
 
 Entretanto:
 
-* Não existe **API pública de consulta**
-* Os dados são fornecidos via **CSV embutido em HTML**
-* O arquivo possui **estrutura hierárquica inconsistente** (campos omitidos em linhas subsequentes)
+* Não existe API pública
+* Os dados são disponibilizados em CSV embutido em HTML
+* A estrutura apresenta inconsistências hierárquicas
 
-Este projeto resolve essas limitações construindo um pipeline de **extração e normalização de dados**.
+Este projeto resolve essas limitações por meio de um pipeline de extração e normalização.
 
 ---
 
-## ⚙️ Como funciona
-
-O pipeline foi implementado em **Google Apps Script** e segue três etapas principais:
+## ⚙️ Arquitetura
 
 ### 1. Extração
 
 * Acessa a página oficial da SPA
-* Identifica dinamicamente o link do CSV
-* Realiza o download do arquivo bruto
+* Localiza dinamicamente o arquivo CSV
+* Realiza o download dos dados
 
 ### 2. Transformação
 
 * Reconstrói a hierarquia (empresa → marca → domínio)
-* Normaliza o CNPJ (somente números)
-* Preenche campos ausentes com base em memória da última linha válida
-* Aplica fallback para marcas a partir do domínio
+* Padroniza CNPJ
+* Propaga valores ausentes
+* Aplica fallback de marca baseado em domínio
 * Corrige problemas de encoding
 
 ### 3. Carga
 
-* Publica os dados tratados no Google Sheets
-* Aplica formatação para facilitar análise e integrações
+* Publica os dados em Google Sheets
+* Aplica formatação para análises e integrações
 
 ---
 
 ## 🧠 Principais diferenciais
 
-* Reconstrução hierárquica (evita registros órfãos)
-* Padronização de CNPJ para joins confiáveis
-* Fallback inteligente de marca via domínio
-* Sanitização automática de caracteres
-* Estrutura pronta para uso em monitoramento de risco
-
----
-
-## 📊 Modelo de dados
-
-| Campo              | Descrição                    | Função                   |
-| ------------------ | ---------------------------- | ------------------------ |
-| ID                 | Identificador da autorização | Auditoria                |
-| PORTARIA           | Número da portaria           | Validação legal          |
-| DENOMINAÇÃO SOCIAL | Razão social                 | Identificação da empresa |
-| CNPJ               | CNPJ numérico                | Chave principal          |
-| MARCAS             | Nomes fantasia               | Matching de transações   |
-| DOMÍNIOS           | URLs autorizadas             | Detecção de fraude       |
-| REQUERIMENTO       | Protocolo                    | Controle temporal        |
+* Reconstrução hierárquica
+* Padronização de CNPJ
+* Fallback inteligente de marca
+* Sanitização automática
+* Estrutura preparada para monitoramento de risco e PLD
 
 ---
 
 ## 🚨 Casos de uso
 
-* Identificação de bets não autorizadas
+* Identificação de operadores não autorizados
 * Monitoramento de transações suspeitas
-* Cruzamento com base de merchants
-* Detecção de tentativa de fraude por similaridade de marca
-
----
-
-## 📂 Estrutura do projeto
-
-```
-apps_script/     → Script principal em Google Apps Script
-docs/            → Documentação técnica
-data_sample/     → Exemplo de saída do pipeline
-```
-
----
-
-## ▶️ Como utilizar
-
-1. Abra o Google Sheets
-2. Vá em **Extensões → Apps Script**
-3. Copie o conteúdo de:
-
-```
-apps_script/importarAutorizadasFinal.gs
-```
-
-4. Atualize o ID da planilha:
-
-```javascript
-const SPREADSHEET_ID = 'SEU_SPREADSHEET_ID';
-```
-
-5. Execute a função:
-
-```javascript
-importarAutorizadasFinal()
-```
-
-6. (Opcional) Configure um gatilho diário para atualização automática
-
----
-
-## ⚠️ Limitações
-
-* Não há API oficial disponível pela SPA/MF
-* Dependência da estrutura HTML da página
-* Mudanças no site podem exigir ajustes no script
+* Cruzamento com bases de merchants
+* Detecção de fraude por similaridade de marca
 
 ---
 
@@ -131,27 +180,3 @@ Este projeto tem finalidade de:
 * Estruturação de dados para PLD
 
 Não substitui fontes oficiais do governo.
-
----
-
-## 🔄 Outras aplicações
-
-A mesma abordagem deste projeto pode ser aplicada a diversas bases públicas brasileiras que não possuem API estruturada e exigem extração via HTML, CSV ou PDF.
-
-Exemplos:
-
-* **Banco Central (BCB):** listas de instituições autorizadas
-* **CVM:** cadastro de fundos e participantes do mercado
-* **ANEEL:** agentes do setor elétrico
-* **Portal da Transparência (CGU):** despesas e fornecedores públicos
-* **MEC:** dados educacionais (ENEM, Censo Escolar)
-* **Diário Oficial da União (DOU):** publicações regulatórias
-* **Páginas gov.br:** datasets com links dinâmicos
-
-Essas fontes compartilham desafios como ausência de API, inconsistências estruturais e necessidade de normalização para uso analítico.
-
----
-
-## 📄 Licença
-
-MIT License
